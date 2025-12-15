@@ -25,7 +25,7 @@ console.log(
 
 // --- CRITICAL CORS FIX START ---
 // ACTION REQUIRED: REPLACE THIS PLACEHOLDER with your EXACT, FULL public URL for the boloforms-frontend service on Render.
-const YOUR_FRONTEND_RENDER_URL = 'https://boloforms-backend-f5bh.onrender.com'; 
+const YOUR_FRONTEND_RENDER_URL = 'https://boloforms-frontend.onrender.com'; 
 
 app.use(cors({
     origin: YOUR_FRONTEND_RENDER_URL, 
