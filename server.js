@@ -23,7 +23,18 @@ console.log(
   )}`
 );
 
-app.use(cors());
+// --- CRITICAL CORS FIX START ---
+// ACTION REQUIRED: REPLACE THIS PLACEHOLDER with your EXACT, FULL public URL for the boloforms-frontend service on Render.
+const YOUR_FRONTEND_RENDER_URL = 'https://boloforms-backend-f5bh.onrender.com'; 
+
+app.use(cors({
+    origin: YOUR_FRONTEND_RENDER_URL, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+}));
+// --- CRITICAL CORS FIX END ---
+
+
 app.use(bodyParser.json({ limit: "50mb" }));
 
 const mongoUri =
@@ -69,19 +80,19 @@ function toPdfPoints(
   let absoluteWidth = relativeWidth * pdfPageWidth;
   let absoluteHeight = relativeHeight * pdfPageHeight;
 
-    // *** CRITICAL COORDINATE OVERRIDE ***
-    // If the calculated X is at the maximum page width, the input was bad (1.0).
-    // FORCE the X and W to safe, central values. This ensures the image is visible.
-    if (absoluteX >= pdfPageWidth) { 
-        console.warn(`[COORD OVERRIDE] Calculated X=${absoluteX.toFixed(2)} was too large. Forcing safe coordinates.`);
-        
-        // Define safe coordinates and dimensions
-        absoluteX = pdfPageWidth * 0.15; // Start 15% from the left
-        absoluteWidth = pdfPageWidth * 0.20; // Set width to 20% of page
-        // Use the smaller of the calculated height or 10% of page height
-        absoluteHeight = Math.min(absoluteHeight, pdfPageHeight * 0.10); 
-    }
-    // *** END OVERRIDE ***
+    // *** CRITICAL COORDINATE OVERRIDE ***
+    // If the calculated X is at the maximum page width, the input was bad (1.0).
+    // FORCE the X and W to safe, central values. This ensures the image is visible.
+    if (absoluteX >= pdfPageWidth) { 
+        console.warn(`[COORD OVERRIDE] Calculated X=${absoluteX.toFixed(2)} was too large. Forcing safe coordinates.`);
+        
+        // Define safe coordinates and dimensions
+        absoluteX = pdfPageWidth * 0.15; // Start 15% from the left
+        absoluteWidth = pdfPageWidth * 0.20; // Set width to 20% of page
+        // Use the smaller of the calculated height or 10% of page height
+        absoluteHeight = Math.min(absoluteHeight, pdfPageHeight * 0.10); 
+    }
+    // *** END OVERRIDE ***
 
     // Convert Relative Y (0.0=Top of PDF) to PDF Y (0.0=Bottom of Page)
   const absoluteY_TopLeft = safeRelativeY * pdfPageHeight;
@@ -198,10 +209,10 @@ app.post("/sign-pdf", async (req, res) => {
     const offsetX = (pdfField.width - finalWidth) / 2;
     const offsetY = (pdfField.height - finalHeight) / 2; 
 
-    // Calculate Final Draw Position (Bottom-Left Corner of Image)
+    // Calculate Final Draw Position (Bottom-Left Corner of Image)
     const finalX = pdfField.x + offsetX; 
     const finalY = pdfField.y + offsetY;
-    
+    
     console.log("--- Final Draw Dimensions & Position ---");
     console.log(
       `Final Draw Position (X, Y): ${finalX.toFixed(2)}, ${finalY.toFixed(2)}`
