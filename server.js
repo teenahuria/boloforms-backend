@@ -15,22 +15,16 @@ const PORT = process.env.PORT || 3001;
 const SERVER_BASE_URL =
   process.env.SERVER_BASE_URL || `http://localhost:${PORT}`;
 
-app.use("/signed_docs", express.static(path.join(__dirname, "signed_docs")));
-console.log(
-  `Static file serving configured for URL path '/signed_docs' pointing to: ${path.join(
-    __dirname,
-    "signed_docs"
-  )}`
-);
+// REMOVED: Static file serving moved to the bottom.
 
 // --- CRITICAL CORS FIX START ---
 // ACTION REQUIRED: REPLACE THIS PLACEHOLDER with your EXACT, FULL public URL for the boloforms-frontend service on Render.
 const YOUR_FRONTEND_RENDER_URL = 'https://boloforms-frontend.onrender.com'; 
 
 app.use(cors({
-    origin: YOUR_FRONTEND_RENDER_URL, 
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type'],
+    origin: YOUR_FRONTEND_RENDER_URL, 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
 }));
 // --- CRITICAL CORS FIX END ---
 
@@ -271,6 +265,14 @@ app.post("/sign-pdf", async (req, res) => {
   }
 });
 
+// --- MOVE app.use(static) HERE ---
+app.use("/signed_docs", express.static(path.join(__dirname, "signed_docs")));
+console.log(
+  `Static file serving configured for URL path '/signed_docs' pointing to: ${path.join(
+    __dirname,
+    "signed_docs"
+  )}`
+);
 
 app.listen(PORT, () => {
   console.log(`Backend server running on port ${PORT}`);
